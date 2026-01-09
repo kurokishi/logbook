@@ -4,6 +4,7 @@ engine = create_engine("sqlite:///data/sim_it_rsud.db", echo=False)
 
 def init_db():
     with engine.begin() as conn:
+
         conn.execute(text("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -12,7 +13,7 @@ def init_db():
             password TEXT,
             role TEXT,
             aktif INTEGER
-        )""")
+        )"""))
 
         conn.execute(text("""
         CREATE TABLE IF NOT EXISTS tiket (
@@ -30,18 +31,18 @@ def init_db():
             approved_by TEXT,
             approved_at TEXT,
             selesai_at TEXT
-        )""")
+        )"""))
 
         conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS ekinerja (
+        CREATE TABLE IF NOT EXISTS bukti_dukung (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             tiket_id INTEGER,
-            pegawai TEXT,
-            narasi TEXT,
-            angka_kredit REAL,
-            bulan INTEGER,
-            tahun INTEGER
-        )""")
+            file_name TEXT,
+            file_path TEXT,
+            hash_file TEXT,
+            uploaded_by TEXT,
+            uploaded_at TEXT
+        )"""))
 
         conn.execute(text("""
         CREATE TABLE IF NOT EXISTS audit_log (
@@ -51,4 +52,4 @@ def init_db():
             aksi TEXT,
             objek TEXT,
             timestamp TEXT
-        )""")
+        )"""))
