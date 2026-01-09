@@ -1,18 +1,17 @@
-sim_it_support/
+logbook/
 │
 ├── app.py
-├── auth.py
 ├── database.py
-├── audit.py
+├── auth.py
 ├── permissions.py
+│
 ├── modules/
-│   ├── dashboard.py
 │   ├── tiket.py
 │   ├── approval.py
-│   ├── ekinerja.py
-│   └── users.py
+│   └── ekinerja.py
 │
+├── uploads/
 ├── data/
-│   └── sim_it.db
 │
-└── requirements.txt
+├── init_user.py
+├── requirements.txt
