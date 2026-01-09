@@ -9,16 +9,19 @@ def file_hash(file):
     return hashlib.sha256(file.getvalue()).hexdigest()
 
 def page(engine):
-    st.header("Input Logbook IT Support")
+    st.header("Logbook IT Support RSUD")
 
-    with st.form("tiket"):
+    with st.form("tiket_form"):
         jenis = st.selectbox("Jenis Pekerjaan", ["Hardware", "Software", "Jaringan", "SIMRS"])
         perangkat = st.text_input("Perangkat")
         ruang = st.text_input("Ruang / Unit")
         keluhan = st.text_area("Keluhan")
         tindakan = st.text_area("Tindakan")
-        files = st.file_uploader("Bukti Dukung", accept_multiple_files=True)
-
+        bukti = st.file_uploader(
+            "Upload Bukti Dukung",
+            accept_multiple_files=True,
+            type=["jpg", "png", "pdf"]
+        )
         submit = st.form_submit_button("Simpan")
 
     if submit:
@@ -41,7 +44,7 @@ def page(engine):
 
             tiket_id = res.lastrowid
 
-            for f in files:
+            for f in bukti:
                 path = os.path.join(UPLOAD_DIR, f"{tiket_id}_{f.name}")
                 with open(path, "wb") as out:
                     out.write(f.getbuffer())
@@ -58,4 +61,4 @@ def page(engine):
                     "w": now.isoformat()
                 })
 
-        st.success("Tiket dan bukti tersimpan")
+        st.success("Logbook & bukti berhasil disimpan")
