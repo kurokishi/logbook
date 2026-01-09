@@ -6,15 +6,15 @@ def page(engine):
     st.header("Approval Atasan")
 
     with engine.connect() as conn:
-        data = conn.execute(
+        rows = conn.execute(
             text("SELECT * FROM tiket WHERE status='SELESAI'")
         ).fetchall()
 
-    for d in data:
-        st.subheader(f"Tiket #{d.id} - {d.jenis_pekerjaan}")
-        st.write(d.keluhan)
+    for r in rows:
+        st.subheader(f"Tiket #{r.id}")
+        st.write(r.keluhan)
 
-        if st.button(f"Approve #{d.id}"):
+        if st.button(f"Approve #{r.id}"):
             with engine.begin() as conn:
                 conn.execute(text("""
                     UPDATE tiket SET
@@ -25,7 +25,7 @@ def page(engine):
                 """), {
                     "u": st.session_state.user,
                     "t": datetime.datetime.now().isoformat(),
-                    "i": d.id
+                    "i": r.id
                 })
             st.success("Disetujui")
             st.rerun()
