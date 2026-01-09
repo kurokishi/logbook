@@ -4,8 +4,19 @@ from sqlalchemy import text
 
 with engine.begin() as conn:
     conn.execute(text("""
-    INSERT OR IGNORE INTO users
-    VALUES (NULL,'admin','Administrator',:p,'Admin',1)
-    """), {"p": hash_pw("admin123")})
+        DELETE FROM users WHERE username='admin'
+    """))
 
-print("Admin siap")
+    conn.execute(text("""
+        INSERT INTO users
+        (username, nama, password, role, aktif)
+        VALUES
+        (:u, :n, :p, :r, 1)
+    """), {
+        "u": "admin",
+        "n": "Administrator",
+        "p": hash_pw("admin123"),
+        "r": "Admin"
+    })
+
+print("User admin berhasil dibuat ulang")
