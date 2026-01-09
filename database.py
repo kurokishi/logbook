@@ -1,4 +1,5 @@
 import os
+import hashlib
 from sqlalchemy import create_engine, text
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -63,3 +64,17 @@ def init_db():
             objek TEXT,
             timestamp TEXT
         )"""))
+
+        # ===== AUTO CREATE ADMIN (HANYA JIKA DB BARU) =====
+        count = conn.execute(
+            text("SELECT COUNT(*) FROM users")
+        ).scalar()
+
+        if count == 0:
+            pw = hashlib.sha256("admin123".encode()).hexdigest()
+            conn.execute(text("""
+                INSERT INTO users
+                (username,nama,password,role,aktif)
+                VALUES
+                ('admin','Administrator',:p,'Admin',1)
+            """), {"p": pw})
