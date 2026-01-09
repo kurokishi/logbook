@@ -1,6 +1,17 @@
+import os
 from sqlalchemy import create_engine, text
 
-engine = create_engine("sqlite:///data/sim_it_rsud.db", echo=False)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+
+DB_PATH = os.path.join(DATA_DIR, "sim_it_rsud.db")
+
+engine = create_engine(
+    f"sqlite:///{DB_PATH}",
+    echo=False,
+    connect_args={"check_same_thread": False}
+)
 
 def init_db():
     with engine.begin() as conn:
@@ -22,7 +33,6 @@ def init_db():
             jam TEXT,
             jenis_pekerjaan TEXT,
             perangkat TEXT,
-            spesifikasi TEXT,
             ruang_unit TEXT,
             keluhan TEXT,
             tindakan TEXT,
