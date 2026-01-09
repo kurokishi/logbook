@@ -1,29 +1,27 @@
-import streamlit as st
 import hashlib
+import streamlit as st
 from sqlalchemy import text
 
 def hash_pw(pw):
     return hashlib.sha256(pw.encode()).hexdigest()
 
 def login(engine):
-    st.sidebar.subheader("Login SIM-IT RSUD")
-    u = st.sidebar.text_input("Username")
-    p = st.sidebar.text_input("Password", type="password")
+    st.title("Login SIM-IT RSUD")
 
-    if st.sidebar.button("Login"):
-        q = text("""
-        SELECT username,nama,role FROM users
-        WHERE username=:u AND password=:p AND aktif=1
-        """)
-        r = engine.execute(q, {
-            "u": u,
-            "p": hash_pw(p)
-        }).fetchone()
+    u = st.text_input("Username")
+    p = st.text_input("Password", type="password")
 
-        if r:
-            st.session_state.user = r[0]
-            st.session_state.nama = r[1]
-            st.session_state.role = r[2]
+    if st.button("Login"):
+        with engine.connect() as conn:
+            q = conn.execute(
+                text("SELECT * FROM users WHERE username=:u AND password=:p AND aktif=1"),
+                {"u": u, "p": hash_pw(p)}
+            ).fetchone()
+
+        if q:
+            st.session_state.user = q.username
+            st.session_state.role = q.role
             st.success("Login berhasil")
+            st.rerun()
         else:
             st.error("Login gagal")
