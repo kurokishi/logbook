@@ -1,6 +1,6 @@
 import streamlit as st
-from sqlalchemy import text
 import pandas as pd
+from sqlalchemy import text
 
 def page(engine):
     st.header("Rekap e-Kinerja RSUD")
@@ -11,4 +11,4 @@ def page(engine):
         ).fetchall()
 
     df = pd.DataFrame(rows)
-    st.dataframe(df)
+    st.dataframe(df, use_container_width=True)
