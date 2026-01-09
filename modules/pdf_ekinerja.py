@@ -1,76 +1,32 @@
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
-)
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import *
 from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
-from datetime import datetime
 
-def generate_pdf(filename, pegawai, nip, jabatan, unit, data):
-    doc = SimpleDocTemplate(filename, pagesize=A4)
+def generate_pdf(file, pegawai, nip, unit, data):
+    doc = SimpleDocTemplate(file, pagesize=A4)
     styles = getSampleStyleSheet()
-    elements = []
+    el = []
 
-    # HEADER
-    elements.append(Paragraph(
-        "<b>PEMERINTAH DAERAH</b><br/>"
-        "<b>RUMAH SAKIT UMUM DAERAH</b><br/>"
-        "<b>INSTALASI TEKNOLOGI INFORMASI</b><br/><br/>",
+    el.append(Paragraph(
+        "<b>RSUD</b><br/>INSTALASI TI<br/><br/>"
+        "<b>LAPORAN e-KINERJA IT SUPPORT</b><br/><br/>",
         styles["Title"]
     ))
 
-    elements.append(Paragraph(
-        "<b>LAPORAN KEGIATAN HARIAN IT SUPPORT</b><br/>"
-        "(Bahan Pengisian e-Kinerja ASN)<br/><br/>",
-        styles["Heading2"]
-    ))
-
-    # IDENTITAS
-    elements.append(Paragraph(
-        f"""
-        Nama Pegawai : {pegawai}<br/>
-        NIP : {nip}<br/>
-        Jabatan : {jabatan}<br/>
-        Unit Kerja : {unit}<br/>
-        Bulan/Tahun : {datetime.now().strftime('%B %Y')}<br/><br/>
-        """,
+    el.append(Paragraph(
+        f"Nama: {pegawai}<br/>NIP: {nip}<br/>Unit: {unit}<br/><br/>",
         styles["Normal"]
     ))
 
-    # TABEL KEGIATAN
-    table_data = [["No", "Tanggal", "Uraian Kegiatan", "Angka Kredit"]]
+    table = [["No","Tanggal","Uraian","Angka Kredit"]]
+    for i,d in enumerate(data,1):
+        table.append([i,d["tanggal"],d["narasi"],d["angka"]])
 
-    for i, d in enumerate(data, start=1):
-        table_data.append([
-            i,
-            d["tanggal"],
-            d["narasi"],
-            f"{d['angka']:.2f}"
-        ])
-
-    table = Table(table_data, colWidths=[30, 70, 300, 80])
-    table.setStyle(TableStyle([
-        ("GRID", (0,0), (-1,-1), 1, colors.black),
-        ("BACKGROUND", (0,0), (-1,0), colors.lightgrey),
-        ("VALIGN", (0,0), (-1,-1), "TOP"),
+    t = Table(table,[30,70,280,80])
+    t.setStyle(TableStyle([
+        ("GRID",(0,0),(-1,-1),1,colors.black)
     ]))
 
-    elements.append(table)
-    elements.append(Spacer(1, 30))
-
-    # TTD
-    elements.append(Paragraph(
-        f"""
-        <br/>
-        Mengetahui,<br/>
-        Atasan Langsung<br/><br/><br/><br/>
-        _______________________<br/><br/>
-
-        {datetime.now().strftime('%d %B %Y')}<br/>
-        Pegawai Yang Bersangkutan<br/><br/><br/><br/>
-        <b>{pegawai}</b>
-        """,
-        styles["Normal"]
-    ))
-
-    doc.build(elements)
+    el.append(t)
+    doc.build(el)
