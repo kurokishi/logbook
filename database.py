@@ -4,7 +4,10 @@ from sqlalchemy import create_engine, text
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
+UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+
 os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 DB_PATH = os.path.join(DATA_DIR, "sim_it_rsud.db")
 
@@ -65,7 +68,7 @@ def init_db():
             timestamp TEXT
         )"""))
 
-        # ===== AUTO CREATE ADMIN (HANYA JIKA DB BARU) =====
+        # ADMIN HANYA DIBUAT JIKA DB BARU
         count = conn.execute(
             text("SELECT COUNT(*) FROM users")
         ).scalar()
