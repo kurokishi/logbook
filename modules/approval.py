@@ -1,45 +1,31 @@
 import streamlit as st
-import pandas as pd
 from sqlalchemy import text
-from permissions import allow
-from audit import log
+import datetime
 
 def page(engine):
-    allow("Supervisor","Admin")
-    st.title("Approval Tiket")
+    st.header("Approval Atasan")
 
-    df = pd.read_sql(
-        "SELECT * FROM tiket WHERE status='OPEN'",
-        engine
-    )
+    with engine.connect() as conn:
+        data = conn.execute(
+            text("SELECT * FROM tiket WHERE status='SELESAI'")
+        ).fetchall()
 
-    for _, r in df.iterrows():
-        with st.expander(f"Tiket #{r.id} - {r.ruang_unit}"):
-            st.write(r.keluhan)
+    for d in data:
+        st.subheader(f"Tiket #{d.id} - {d.jenis_pekerjaan}")
+        st.write(d.keluhan)
 
-            cek = engine.execute(text("""
-            SELECT COUNT(*) FROM bukti_dukung
-            WHERE tiket_id=:id
-            """), {"id": r.id}).scalar()
-
-            st.write(f"Bukti dukung: {cek}")
-
-            if cek < 1:
-                st.warning("Belum ada bukti dukung")
-
-            if st.button(f"Setujui #{r.id}") and cek >= 1:
-                engine.execute(text("""
-                UPDATE tiket SET
-                status='DISETUJUI',
-                approved_by=:u,
-                approved_at=datetime('now')
-                WHERE id=:id
+        if st.button(f"Approve #{d.id}"):
+            with engine.begin() as conn:
+                conn.execute(text("""
+                    UPDATE tiket SET
+                    status='DISETUJUI',
+                    approved_by=:u,
+                    approved_at=:t
+                    WHERE id=:i
                 """), {
                     "u": st.session_state.user,
-                    "id": r.id
+                    "t": datetime.datetime.now().isoformat(),
+                    "i": d.id
                 })
-                log(engine, st.session_state.user,
-                    st.session_state.role,
-                    "APPROVE_TIKET",
-                    f"Tiket {r.id}")
-                st.success("Disetujui")
+            st.success("Disetujui")
+            st.rerun()
