@@ -8,7 +8,7 @@ def page(engine):
     with st.form("tiket"):
         tanggal = st.date_input("Tanggal")
         jam = st.time_input("Jam")
-        jenis = st.selectbox("Jenis Pekerjaan", [
+        jenis = st.selectbox("Jenis", [
             "Perbaikan Printer",
             "Troubleshooting Jaringan",
             "Perbaikan Komputer",
@@ -20,13 +20,12 @@ def page(engine):
         ruang = st.text_input("Ruang / Unit")
         keluhan = st.text_area("Keluhan")
 
-        simpan = st.form_submit_button("Simpan")
-
-        if simpan:
+        if st.form_submit_button("Simpan"):
             engine.execute(text("""
             INSERT INTO tiket
             (tanggal,jam,jenis_pekerjaan,perangkat,
-             spesifikasi,ruang_unit,keluhan,status,created_by)
+             spesifikasi,ruang_unit,keluhan,
+             status,created_by)
             VALUES
             (:t,:j,:jp,:p,:s,:r,:k,'OPEN',:u)
             """), {
