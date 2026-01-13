@@ -4,7 +4,17 @@ import { useEffect, useState } from 'react'
 export default function DashboardKabag() {
 const [period, setPeriod] = useState('monthly')
 const [data, setData] = useState(null)
+const handleArchive = async () => {
+if (!confirm('Kunci & arsipkan laporan periode ini?')) return
 
+
+try {
+await api.post(`/reports/archive?period=${period}`)
+alert('Laporan berhasil diarsipkan & dikunci')
+} catch (err) {
+alert('Periode ini sudah diarsipkan')
+}
+}
 
 useEffect(() => {
 api.get(`/dashboard/kabag?period=${period}`)
