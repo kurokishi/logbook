@@ -48,7 +48,22 @@ return (
 <div className="card">SLA<br /><strong>{data.sla_compliance}%</strong></div>
 </div>
 
-
+<button
+onClick={handleArchive}
+style={{
+padding: '10px 16px',
+backgroundColor: '#059669',
+color: 'white',
+border: 'none',
+borderRadius: 6,
+cursor: 'pointer',
+fontWeight: 'bold',
+marginLeft: 10
+}}
+>
+🔒 Arsipkan & Kunci Laporan
+</button>
+  
 <h3>Rekap Per Kategori</h3>
 <table>
 <thead>
