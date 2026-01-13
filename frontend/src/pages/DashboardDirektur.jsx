@@ -1,13 +1,4 @@
 import { useEffect, useState } from 'react'
-import api from '../services/api'
-
-
-export default function DashboardDirektur() {
-const [period, setPeriod] = useState('monthly')
-const [data, setData] = useState(null)
-
-
-useEffect(() => {
 api.get(`/dashboard/direktur?period=${period}`)
 .then(res => setData(res.data))
 .catch(() => alert('Gagal memuat dashboard direktur'))
@@ -66,4 +57,15 @@ Rata-rata Waktu Penyelesaian<br />
 <td>Terlambat</td>
 <td>{data.late}</td>
 </tr>
+</tbody>
+</table>
+
+
+<div className="lock">
+{data.locked
+? '🔒 Data periode ini telah dikunci (final)'
+: '🟢 Data masih berjalan'}
+</div>
+</div>
+)
 }
